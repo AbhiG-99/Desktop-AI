@@ -1,0 +1,1 @@
+from .assistant_window import AssistantWindow
