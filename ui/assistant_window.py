@@ -19,23 +19,23 @@ class AssistantWindow(QWidget):
 
         layout = QVBoxLayout()
 
-        title = QLabel("Desktop AI")
-        title.setAlignment(Qt.AlignCenter)
+        self.title = QLabel("Desktop AI")
+        self.title.setAlignment(Qt.AlignCenter)
 
-        chat = QTextEdit()
-        chat.setReadOnly(True)
-        chat.setPlaceholderText("Conversation will appear here...")
+        self.chat = QTextEdit()
+        self.chat.setReadOnly(True)
+        self.chat.setPlaceholderText("Conversation will appear here...")
 
-        input_box = QTextEdit()
-        input_box.setFixedHeight(70)
-        input_box.setPlaceholderText("Ask anything...")
+        self.input_box = QTextEdit()
+        self.input_box.setFixedHeight(70)
+        self.input_box.setPlaceholderText("Ask anything...")
 
-        send = QPushButton("Send")
+        self.send = QPushButton("Send")
 
-        layout.addWidget(title)
-        layout.addWidget(chat)
-        layout.addWidget(input_box)
-        layout.addWidget(send)
+        layout.addWidget(self.title)
+        layout.addWidget(self.chat)
+        layout.addWidget(self.input_box)
+        layout.addWidget(self.send)
 
         self.setLayout(layout)
 
