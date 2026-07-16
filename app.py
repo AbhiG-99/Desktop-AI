@@ -1,53 +1,83 @@
 import sys
-import keyboard
 
 from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QObject, Signal, QThread
 
 from ui.assistant_window import AssistantWindow
-from ai.llm import ask_ai
-# print("Creating app")
+
+from ai.worker import AIWorker
+
+
+class WorkerSignals(QObject):
+    ask = Signal(str)
+
 
 app = QApplication(sys.argv)
-# print("Creating window")
+
 window = AssistantWindow()
-# print("Showing window")
 window.show()
 
-# print("Starting event loop")
-def toggle_window():
-    if window.isVisible():
-        window.hide()
-    else:
-        window.show()
-        window.activateWindow()
 
+# -----------------------
+# Create background thread
+# -----------------------
+
+thread = QThread()
+
+worker = AIWorker()
+worker.moveToThread(thread)
+
+signals = WorkerSignals()
+
+signals.ask.connect(worker.run)
+
+thread.start()
+
+
+# -----------------------
+# Send Button
+# -----------------------
 
 def send_message():
-    # Get user's message
-    user_message = window.input_box.toPlainText().strip()
 
-    if not user_message:
+    prompt = window.input_box.toPlainText().strip()
+
+    if not prompt:
         return
 
-    # Show user message
-    window.chat.append(f"<b>You:</b> {user_message}")
+    window.chat.append(f"<b>You:</b> {prompt}")
 
-    # Clear input box
     window.input_box.clear()
 
-    # Ask AI
-    ai_response = ask_ai(user_message)
 
-    # Show AI response
-    window.chat.append(f"<b>AI:</b> {ai_response}")
-    window.chat.append("")  # Empty line for spacing
+    signals.ask.emit(prompt)
 
 
-# Connect Send button
 window.send.clicked.connect(send_message)
 
-# Hotkeys
-# keyboard.add_hotkey("ctrl+alt", toggle_window)
-# keyboard.add_hotkey("esc", lambda: window.hide())
+
+# -----------------------
+# AI Finished
+# -----------------------
+
+def ai_finished(response):
+    window.chat.append(f"<b>Desktop AI:</b> {response}")
+    window.chat.append("")
+
+
+worker.finished.connect(ai_finished)
+
+
+# -----------------------
+# Error
+# -----------------------
+
+def ai_error(error):
+
+    window.chat.append(f"<font color='red'>{error}</font>")
+
+
+worker.error.connect(ai_error)
+
 
 sys.exit(app.exec())
