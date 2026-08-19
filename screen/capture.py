@@ -2,11 +2,11 @@ import mss
 import base64
 from io import BytesIO
 from PIL import Image
-from screen.monitor import get_primary_monitor
+from screen.monitor import get_primary_monitor, _get_mss
 
 def capture_screen(monitor=None):
     """Capture a screenshot and return it as a PIL Image."""
-    with mss.MSS() as sct:
+    with _get_mss() as sct:
         region = monitor or get_primary_monitor()
         shot = sct.grab(region)
         img = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
