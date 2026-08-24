@@ -10,6 +10,7 @@ from ai.memory import (
     get_messages,
 )
 from services.automation import execute_action, parse_ai_action
+from screen.capture import capture_as_base64
 
 
 class AIWorker(QObject):
@@ -22,8 +23,8 @@ class AIWorker(QObject):
             # Save user message
             add_user_message(user_message)
 
-            # Ask the AI using full conversation history
-            response = ask_ai(get_messages())
+            # Ask the AI using full conversation history + current screen
+            response = ask_ai(get_messages(), image_b64=capture_as_base64())
 
             # Check if the AI requested a desktop action
             request = parse_ai_action(response)
