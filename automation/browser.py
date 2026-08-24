@@ -26,6 +26,7 @@ class BrowserAutomation(QObject):
     def __init__(self, dry_run: bool = False, parent: QObject | None = None):
         super().__init__(parent)
         self.dry_run = dry_run
+        self._pw = None
         self._browser = None
         self._page = None
 

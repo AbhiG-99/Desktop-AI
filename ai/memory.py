@@ -22,6 +22,13 @@ def add_ai_message(text):
     })
 
 
+def add_system_note(text):
+    messages.append({
+        "role": "system",
+        "content": text
+    })
+
+
 def get_messages():
     return messages
 

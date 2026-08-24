@@ -7,6 +7,8 @@ from ui.assistant_window import AssistantWindow
 
 from ai.worker import AIWorker
 
+from services.automation import get_manager
+
 
 class WorkerSignals(QObject):
     ask = Signal(str)
@@ -78,6 +80,15 @@ def ai_error(error):
 
 
 worker.error.connect(ai_error)
+
+
+# -----------------------
+# Automation cleanup
+# -----------------------
+
+manager = get_manager()
+
+app.aboutToQuit.connect(manager.cleanup)
 
 
 sys.exit(app.exec())
